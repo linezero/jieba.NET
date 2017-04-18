@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System;
 
 namespace JiebaNet.Analyser
 {
@@ -9,7 +10,7 @@ namespace JiebaNet.Analyser
         {
             get
             {
-                return "Resources";
+                return Path.Combine(AppContext.BaseDirectory,"Resources");
             }
         }
 
