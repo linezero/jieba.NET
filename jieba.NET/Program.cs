@@ -8,10 +8,6 @@ namespace jieba.NET
     {
         static void Main(string[] args)
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            //TestDemo test = new TestDemo();
-            //test.CutDemo();
-            //test.TokenizeDemo();
             var segmenter = new JiebaSegmenter();
             var segments = segmenter.Cut("我来到北京清华大学", cutAll: true);
             Console.WriteLine("【全模式】：{0}", string.Join("/ ", segments));

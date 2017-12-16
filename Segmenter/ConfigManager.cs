@@ -10,11 +10,6 @@ namespace JiebaNet.Segmenter
             get
             {
                 var configFileDir = "Resources";
-                if (!Path.IsPathRooted(configFileDir))
-                {
-                    var domainDir = AppContext.BaseDirectory;
-                    configFileDir = Path.GetFullPath(Path.Combine(domainDir, configFileDir));
-                }
                 return configFileDir;
             }
         }

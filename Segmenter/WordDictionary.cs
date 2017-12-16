@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using JiebaNet.Segmenter.Common;
+using Microsoft.Extensions.FileProviders;
+using System.Reflection;
 
 namespace JiebaNet.Segmenter
 {
@@ -39,8 +41,10 @@ namespace JiebaNet.Segmenter
             {
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
-                var stream = new FileStream(MainDict, FileMode.Open);
-                using (var sr = new StreamReader(stream, Encoding.UTF8))
+                var filePath = ConfigManager.MainDictFile;
+                var provider = new EmbeddedFileProvider(GetType().GetTypeInfo().Assembly);
+                var fileInfo = provider.GetFileInfo(filePath);
+                using (var sr = new StreamReader(fileInfo.CreateReadStream(), Encoding.UTF8))
                 {
                     string line = null;
                     while ((line = sr.ReadLine()) != null)

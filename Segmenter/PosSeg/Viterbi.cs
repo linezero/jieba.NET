@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using JiebaNet.Segmenter.Common;
 using Newtonsoft.Json;
@@ -64,16 +63,16 @@ namespace JiebaNet.Segmenter.PosSeg
 
         private static void LoadModel()
         {
-            var startJson = File.ReadAllText(Path.GetFullPath(ConfigManager.PosProbStartFile));
+            var startJson = FileExtension.ReadEmbeddedAllLine(ConfigManager.PosProbStartFile);
             _startProbs = JsonConvert.DeserializeObject<IDictionary<string, double>>(startJson);
 
-            var transJson = File.ReadAllText(Path.GetFullPath(ConfigManager.PosProbTransFile));
+            var transJson = FileExtension.ReadEmbeddedAllLine(ConfigManager.PosProbTransFile);
             _transProbs = JsonConvert.DeserializeObject<IDictionary<string, IDictionary<string, double>>>(transJson);
 
-            var emitJson = File.ReadAllText(Path.GetFullPath(ConfigManager.PosProbEmitFile));
+            var emitJson = FileExtension.ReadEmbeddedAllLine(ConfigManager.PosProbEmitFile);
             _emitProbs = JsonConvert.DeserializeObject<IDictionary<string, IDictionary<char, double>>>(emitJson);
 
-            var tabJson = File.ReadAllText(Path.GetFullPath(ConfigManager.CharStateTabFile));
+            var tabJson = FileExtension.ReadEmbeddedAllLine(ConfigManager.CharStateTabFile);
             _stateTab = JsonConvert.DeserializeObject<IDictionary<char, List<string>>>(tabJson);
         }
 

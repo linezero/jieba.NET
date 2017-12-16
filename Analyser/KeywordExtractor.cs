@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using JiebaNet.Segmenter.Common;
+using Microsoft.Extensions.FileProviders;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace JiebaNet.Analyser
 {
@@ -17,15 +20,10 @@ namespace JiebaNet.Analyser
         public void SetStopWords(string stopWordsFile)
         {
             StopWords = new HashSet<string>();
-
-            var path = Path.GetFullPath(stopWordsFile);
-            if (File.Exists(path))
+            var lines = FileExtension.ReadEmbeddedAllLines(stopWordsFile);
+            foreach (var line in lines)
             {
-                var lines = File.ReadAllLines(path);
-                foreach (var line in lines)
-                {
-                    StopWords.Add(line.Trim());
-                }
+                StopWords.Add(line.Trim());
             }
         }
 

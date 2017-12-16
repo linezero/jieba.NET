@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -75,10 +74,10 @@ namespace JiebaNet.Segmenter.FinalSeg
                 {'S', -1.4652633398537678}
             };
 
-            var transJson = File.ReadAllText(Path.GetFullPath(ConfigManager.ProbTransFile));
+            var transJson = FileExtension.ReadEmbeddedAllLine(ConfigManager.ProbTransFile);
             _transProbs = JsonConvert.DeserializeObject<IDictionary<char, IDictionary<char, double>>>(transJson);
 
-            var emitJson = File.ReadAllText(Path.GetFullPath(ConfigManager.ProbEmitFile));
+            var emitJson = FileExtension.ReadEmbeddedAllLine(ConfigManager.ProbEmitFile);
             _emitProbs = JsonConvert.DeserializeObject<IDictionary<char, IDictionary<char, double>>>(emitJson);
 
             stopWatch.Stop();

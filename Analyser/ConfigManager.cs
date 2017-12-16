@@ -10,7 +10,7 @@ namespace JiebaNet.Analyser
         {
             get
             {
-                return Path.Combine(AppContext.BaseDirectory,"Resources");
+                return "Resources";
             }
         }
 

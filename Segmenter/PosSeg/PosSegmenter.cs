@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,7 +43,7 @@ namespace JiebaNet.Segmenter.PosSeg
             try
             {
                 _wordTagTab = new Dictionary<string, string>();
-                var lines = File.ReadAllLines(ConfigManager.MainDictFile, Encoding.UTF8);
+                var lines = FileExtension.ReadEmbeddedAllLines(ConfigManager.MainDictFile);
                 foreach (var line in lines)
                 {
                     var tokens = line.Split(' ');
@@ -60,7 +59,7 @@ namespace JiebaNet.Segmenter.PosSeg
                     _wordTagTab[word] = tag;
                 }
             }
-            catch (IOException e)
+            catch (System.IO.IOException e)
             {
                 Debug.Fail(string.Format("Word tag table load failure, reason: {0}", e.Message));
             }
