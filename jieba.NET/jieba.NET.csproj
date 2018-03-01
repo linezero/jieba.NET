@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Analyser\Analyser.csproj" />
     <ProjectReference Include="..\Segmenter\Segmenter.csproj" />
   </ItemGroup>
