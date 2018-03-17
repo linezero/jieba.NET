@@ -9,6 +9,7 @@ namespace jieba.NET
         static void Main(string[] args)
         {
             var segmenter = new JiebaSegmenter();
+            segmenter.LoadUserDict("userdict.txt");
             var segments = segmenter.Cut("我来到北京清华大学", cutAll: true);
             Console.WriteLine("【全模式】：{0}", string.Join("/ ", segments));
 
@@ -23,6 +24,9 @@ namespace jieba.NET
 
             segments = segmenter.Cut("结过婚的和尚未结过婚的");
             Console.WriteLine("【歧义消除】：{0}", string.Join("/ ", segments));
+
+            segments = segmenter.Cut("linezerodemo机器学习学习机器");
+            Console.WriteLine("【用户字典】：{0}", string.Join("/ ", segments));
             Console.ReadKey();
         }
     }

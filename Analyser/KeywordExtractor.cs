@@ -2,7 +2,6 @@
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace JiebaNet.Analyser
 {
@@ -24,6 +23,22 @@ namespace JiebaNet.Analyser
             foreach (var line in lines)
             {
                 StopWords.Add(line.Trim());
+            }
+        }
+
+        public void AddStopWord(string word)
+        {
+            if (!StopWords.Contains(word))
+            {
+                StopWords.Add(word.Trim());
+            }
+        }
+
+        public void AddStopWords(IEnumerable<string> words)
+        {
+            foreach (var word in words)
+            {
+                AddStopWord(word);
             }
         }
 
