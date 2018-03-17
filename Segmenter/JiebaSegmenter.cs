@@ -403,7 +403,7 @@ namespace JiebaNet.Segmenter
                 {
                     var startTime = DateTime.Now.Millisecond;
 
-                    var lines = FileExtension.ReadEmbeddedAllLines(dictFullPath);
+                    var lines = File.ReadAllLines(dictFullPath, Encoding.UTF8);
                     foreach (var line in lines)
                     {
                         if (string.IsNullOrWhiteSpace(line))
