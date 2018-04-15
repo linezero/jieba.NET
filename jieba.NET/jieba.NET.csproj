@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Segmenter\Segmenter.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="userdict.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

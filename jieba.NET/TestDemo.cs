@@ -3,6 +3,7 @@ using System.Linq;
 using JiebaNet.Analyser;
 using JiebaNet.Segmenter.PosSeg;
 using JiebaNet.Segmenter;
+using JiebaNet.Segmenter.Common;
 
 namespace jieba.NET
 {
@@ -102,6 +103,17 @@ namespace jieba.NET
             foreach (var keyword in keywords)
             {
                 Console.WriteLine(keyword);
+            }
+        }
+
+        public void TestWordFreq()
+        {
+            var s = "此领域探讨如何处理及运用自然语言。自然语言生成系统把计算机数据转化为自然语言。自然语言理解系统把自然语言转化为计算机程序更易于处理的形式。";
+            var seg = new JiebaSegmenter();
+            var freqs = new Counter<string>(seg.Cut(s));
+            foreach (var pair in freqs.MostCommon())
+            {
+                Console.WriteLine($"{pair.Key}: {pair.Value}");
             }
         }
     }

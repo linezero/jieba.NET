@@ -1,4 +1,5 @@
 ﻿using JiebaNet.Segmenter;
+using JiebaNet.Segmenter.Common;
 using System;
 using System.Text;
 
@@ -27,6 +28,14 @@ namespace jieba.NET
 
             segments = segmenter.Cut("linezerodemo机器学习学习机器");
             Console.WriteLine("【用户字典】：{0}", string.Join("/ ", segments));
+
+            //词频统计
+            var s = "此领域探讨如何处理及运用自然语言。自然语言生成系统把计算机数据转化为自然语言。自然语言理解系统把自然语言转化为计算机程序更易于处理的形式。";
+            var freqs = new Counter<string>(segmenter.Cut(s));
+            foreach (var pair in freqs.MostCommon(5))
+            {
+                Console.WriteLine($"{pair.Key}: {pair.Value}");
+            }
             Console.ReadKey();
         }
     }
