@@ -5,48 +5,48 @@ namespace JiebaNet.Segmenter
 {
     public class ConfigManager
     {
-        public static string ConfigFileBaseDir
+        private static string ConfigFileBaseDir
         {
             get
             {
-                var configFileDir = "Resources";
+                var configFileDir = "JiebaNet.Segmenter.Resources";
                 return configFileDir;
             }
         }
 
         public static string MainDictFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "dict.txt"); }
+            get { return $"{ConfigFileBaseDir}.dict.txt"; }
         }
 
         public static string ProbTransFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "prob_trans.json"); }
+            get { return $"{ConfigFileBaseDir}.prob_trans.json"; }
         }
 
         public static string ProbEmitFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "prob_emit.json"); }
+            get { return $"{ConfigFileBaseDir}.prob_emit.json"; }
         }
 
         public static string PosProbStartFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "pos_prob_start.json"); }
+            get { return $"{ConfigFileBaseDir}.pos_prob_start.json"; }
         }
 
         public static string PosProbTransFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "pos_prob_trans.json"); }
+            get { return $"{ConfigFileBaseDir}.pos_prob_trans.json"; }
         }
 
         public static string PosProbEmitFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "pos_prob_emit.json"); }
+            get { return $"{ConfigFileBaseDir}.pos_prob_emit.json"; }
         }
 
         public static string CharStateTabFile
         {
-            get { return Path.Combine(ConfigFileBaseDir, "char_state_tab.json"); }
+            get { return $"{ConfigFileBaseDir}.char_state_tab.json"; }
         }
     }
 }
