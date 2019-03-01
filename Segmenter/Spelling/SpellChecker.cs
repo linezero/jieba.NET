@@ -31,10 +31,8 @@ namespace JiebaNet.Segmenter.Spelling
                 var second = wd.Key[1];
                 var first = wd.Key[0];
                 if (!FirstChars.ContainsKey(second))
-                {
                     FirstChars[second] = new HashSet<char>();
-                }
-
+                
                 FirstChars[second].Add(first);
             }
         }
@@ -43,9 +41,7 @@ namespace JiebaNet.Segmenter.Spelling
         {
             var splits = new List<WordSplit>();
             for (var i = 0; i <= word.Length; i++)
-            {
                 splits.Add(new WordSplit() {Left = word.Substring(0, i), Right = word.Substring(i)});
-            }
 
             var deletes = splits
                 .Where(s => !string.IsNullOrEmpty(s.Right))
