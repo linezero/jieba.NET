@@ -21,10 +21,7 @@ namespace JiebaNet.Segmenter.PosSeg
         }
 
         // TODO: synchronized
-        public static Viterbi Instance
-        {
-            get { return Lazy.Value; }
-        }
+        public static Viterbi Instance => Lazy.Value;
 
         public IEnumerable<Pair> Cut(string sentence)
         {
@@ -38,24 +35,27 @@ namespace JiebaNet.Segmenter.PosSeg
                 var parts = posList[i].Split('-');
                 var charState = parts[0][0];
                 var pos = parts[1];
-                if (charState == 'B')
-                    begin = i;
-                else if (charState == 'E')
+                switch (charState)
                 {
-                    tokens.Add(new Pair(sentence.Sub(begin, i + 1), pos));
-                    next = i + 1;
-                }
-                else if (charState == 'S')
-                {
-                    tokens.Add(new Pair(sentence.Sub(i, i + 1), pos));
-                    next = i + 1;
+                    case 'B':
+                        begin = i;
+                        break;
+                    case 'E':
+                        tokens.Add(new Pair(sentence.Sub(begin, i + 1), pos));
+                        next = i + 1;
+                        break;
+                    case 'S':
+                        tokens.Add(new Pair(sentence.Sub(i, i + 1), pos));
+                        next = i + 1;
+                        break;
                 }
             }
+
             if (next < sentence.Length)
             {
                 tokens.Add(new Pair(sentence.Substring(next), posList[next].Split('-')[1]));
             }
-            
+
             return tokens;
         }
 
@@ -138,6 +138,7 @@ namespace JiebaNet.Segmenter.PosSeg
                             state = y0;
                         }
                     }
+
                     v[i][y] = prob;
                     memPath[i][y] = state;
                 }
@@ -150,8 +151,9 @@ namespace JiebaNet.Segmenter.PosSeg
             foreach (var endPoint in last)
             {
                 // TODO: compare two very small values;
-                if (endProb < endPoint.Prob || 
-                    (endProb == endPoint.Prob && String.Compare(endState, endPoint.State, StringComparison.CurrentCultureIgnoreCase) < 0))
+                if (endProb < endPoint.Prob ||
+                    (endProb == endPoint.Prob &&
+                     string.Compare(endState, endPoint.State, StringComparison.CurrentCultureIgnoreCase) < 0))
                 {
                     endProb = endPoint.Prob;
                     endState = endPoint.State;
@@ -161,7 +163,7 @@ namespace JiebaNet.Segmenter.PosSeg
             var route = new string[sentence.Length];
             var n = sentence.Length - 1;
             var curState = endState;
-            while(n >= 0)
+            while (n >= 0)
             {
                 route[n] = curState;
                 curState = memPath[n][curState];

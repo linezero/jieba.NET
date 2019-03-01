@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using JiebaNet.Segmenter.Common;
 using Newtonsoft.Json;
@@ -12,7 +11,7 @@ namespace JiebaNet.Segmenter.FinalSeg
     public class Viterbi : IFinalSeg
     {
         private static readonly Lazy<Viterbi> Lazy = new Lazy<Viterbi>(() => new Viterbi());
-        private static readonly char[] States = { 'B', 'M', 'E', 'S' };
+        private static readonly char[] States = {'B', 'M', 'E', 'S'};
 
         private static readonly Regex RegexChinese = new Regex(@"([\u4E00-\u9FD5]+)", RegexOptions.Compiled);
         private static readonly Regex RegexSkip = new Regex(@"([a-zA-Z0-9]+(?:\.\d+)?%?)", RegexOptions.Compiled);
@@ -28,10 +27,7 @@ namespace JiebaNet.Segmenter.FinalSeg
         }
 
         // TODO: synchronized
-        public static Viterbi Instance
-        {
-            get { return Lazy.Value; }
-        }
+        public static Viterbi Instance => Lazy.Value;
 
         public IEnumerable<string> Cut(string sentence)
         {
@@ -39,15 +35,14 @@ namespace JiebaNet.Segmenter.FinalSeg
             foreach (var blk in RegexChinese.Split(sentence))
             {
                 if (RegexChinese.IsMatch(blk))
-                {
                     tokens.AddRange(ViterbiCut(blk));
-                }
                 else
                 {
                     var segments = RegexSkip.Split(blk).Where(seg => !string.IsNullOrEmpty(seg));
                     tokens.AddRange(segments);
                 }
             }
+
             return tokens;
         }
 
@@ -60,10 +55,10 @@ namespace JiebaNet.Segmenter.FinalSeg
 
             _prevStatus = new Dictionary<char, char[]>()
             {
-                {'B', new []{'E', 'S'}},
-                {'M', new []{'M', 'B'}},
-                {'S', new []{'S', 'E'}},
-                {'E', new []{'B', 'M'}}
+                {'B', new[] {'E', 'S'}},
+                {'M', new[] {'M', 'B'}},
+                {'S', new[] {'S', 'E'}},
+                {'E', new[] {'B', 'M'}}
             };
 
             _startProbs = new Dictionary<char, double>()
@@ -108,20 +103,20 @@ namespace JiebaNet.Segmenter.FinalSeg
                 {
                     var emp = _emitProbs[y].GetDefault(sentence[i], Constants.MinProb);
 
-                    Pair<char> candidate = new Pair<char>('\0', double.MinValue);
+                    var candidate = new Pair<char>('\0', double.MinValue);
                     foreach (var y0 in _prevStatus[y])
                     {
                         var tranp = _transProbs[y0].GetDefault(y, Constants.MinProb);
                         tranp = v[i - 1][y0] + tranp + emp;
-                        if (candidate.Freq <= tranp)
-                        {
-                            candidate.Freq = tranp;
-                            candidate.Key = y0;
-                        }
+                        if (!(candidate.Freq <= tranp)) continue;
+                        candidate.Freq = tranp;
+                        candidate.Key = y0;
                     }
+
                     vv[y] = candidate.Freq;
                     newPath[y] = new Node(y, path[candidate.Key]);
                 }
+
                 path = newPath;
             }
 
@@ -135,6 +130,7 @@ namespace JiebaNet.Segmenter.FinalSeg
                 posList.Add(finalPath.Value);
                 finalPath = finalPath.Parent;
             }
+
             posList.Reverse();
 
             var tokens = new List<string>();
@@ -142,23 +138,24 @@ namespace JiebaNet.Segmenter.FinalSeg
             for (var i = 0; i < sentence.Length; i++)
             {
                 var pos = posList[i];
-                if (pos == 'B')
-                    begin = i;
-                else if (pos == 'E')
+                switch (pos)
                 {
-                    tokens.Add(sentence.Sub(begin, i + 1));
-                    next = i + 1;
-                }
-                else if (pos == 'S')
-                {
-                    tokens.Add(sentence.Sub(i, i + 1));
-                    next = i + 1;
+                    case 'B':
+                        begin = i;
+                        break;
+                    case 'E':
+                        tokens.Add(sentence.Sub(begin, i + 1));
+                        next = i + 1;
+                        break;
+                    case 'S':
+                        tokens.Add(sentence.Sub(i, i + 1));
+                        next = i + 1;
+                        break;
                 }
             }
+
             if (next < sentence.Length)
-            {
                 tokens.Add(sentence.Substring(next));
-            }
 
             return tokens;
         }

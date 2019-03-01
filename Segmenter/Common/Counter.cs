@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace JiebaNet.Segmenter.Common
@@ -53,30 +52,32 @@ namespace JiebaNet.Segmenter.Common
         bool Contains(T key);
     }
 
-    public class Counter<T>: ICounter<T>
+    public class Counter<T> : ICounter<T>
     {
-        private Dictionary<T, int> data = new Dictionary<T, int>();
+        private readonly Dictionary<T, int> _data = new Dictionary<T, int>();
 
-        public Counter() {}
+        private Counter()
+        {
+        }
 
         public Counter(IEnumerable<T> items)
         {
             CountItems(items);
         }
 
-        public int Count => data.Count;
-        public int Total => data.Values.Sum();
-        public IEnumerable<KeyValuePair<T, int>> Elements => data;
+        public int Count => _data.Count;
+        public int Total => _data.Values.Sum();
+        public IEnumerable<KeyValuePair<T, int>> Elements => _data;
 
         public int this[T key]
         {
-            get => data.ContainsKey(key) ? data[key] : 0;
-            set => data[key] = value;
+            get => _data.ContainsKey(key) ? _data[key] : 0;
+            set => _data[key] = value;
         }
 
         public IEnumerable<KeyValuePair<T, int>> MostCommon(int n = -1)
         {
-            var pairs = data.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value);
+            var pairs = _data.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value);
             return n < 0 ? pairs : pairs.Take(n);
         }
 
@@ -103,7 +104,7 @@ namespace JiebaNet.Segmenter.Common
         public ICounter<T> Union(ICounter<T> other)
         {
             var result = new Counter<T>();
-            foreach (var pair in data)
+            foreach (var pair in _data)
             {
                 var count = pair.Value;
                 var otherCount = other[pair.Key];
@@ -112,31 +113,26 @@ namespace JiebaNet.Segmenter.Common
             }
 
             foreach (var pair in other.Elements)
-            {
                 if (!Contains(pair.Key))
-                {
                     result[pair.Key] = pair.Value;
-                }
-            }
+
             return result;
         }
 
         public void Remove(T key)
         {
-            if (data.ContainsKey(key))
-            {
-                data.Remove(key);
-            }
+            if (_data.ContainsKey(key))
+                _data.Remove(key);
         }
 
         public void Clear()
         {
-            data.Clear();
+            _data.Clear();
         }
 
         public bool Contains(T key)
         {
-            return data.ContainsKey(key);
+            return _data.ContainsKey(key);
         }
 
         #region Private Methods
@@ -144,33 +140,25 @@ namespace JiebaNet.Segmenter.Common
         private void CountItems(IEnumerable<T> items)
         {
             foreach (var item in items)
-            {
-                data[item] = data.GetDefault(item, 0) + 1;
-            }
+                _data[item] = _data.GetDefault(item, 0) + 1;
         }
 
         private void CountPairs(IEnumerable<KeyValuePair<T, int>> pairs)
         {
             foreach (var pair in pairs)
-            {
                 this[pair.Key] += pair.Value;
-            }
         }
 
         private void SubtractItems(IEnumerable<T> items)
         {
             foreach (var item in items)
-            {
-                data[item] = data.GetDefault(item, 0) - 1;
-            }
+                _data[item] = _data.GetDefault(item, 0) - 1;
         }
 
         private void SubtractPairs(IEnumerable<KeyValuePair<T, int>> pairs)
         {
             foreach (var pair in pairs)
-            {
                 this[pair.Key] -= pair.Value;
-            }
         }
 
         #endregion

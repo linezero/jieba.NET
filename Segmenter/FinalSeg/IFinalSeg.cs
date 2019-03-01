@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 
 namespace JiebaNet.Segmenter.FinalSeg
 {
     /// <summary>
-    /// ÔÚ´ÊµäÇĞ·ÖÖ®ºó£¬Ê¹ÓÃ´Ë½Ó¿Ú½øĞĞÇĞ·Ö£¬Ä¬ÈÏÊµÏÖÎªHMM·½·¨¡£
+    /// åœ¨è¯å…¸åˆ‡åˆ†ä¹‹åï¼Œä½¿ç”¨æ­¤æ¥å£è¿›è¡Œåˆ‡åˆ†ï¼Œé»˜è®¤å®ç°ä¸ºHMMæ–¹æ³•ã€‚
     /// </summary>
     public interface IFinalSeg
     {
