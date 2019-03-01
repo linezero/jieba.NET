@@ -1,7 +1,5 @@
 ﻿using JiebaNet.Segmenter.Common;
-using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
-using System.IO;
 
 namespace JiebaNet.Analyser
 {
@@ -14,35 +12,32 @@ namespace JiebaNet.Analyser
             "this", "then", "at", "have", "all", "not", "one", "has", "or", "that"
         };
 
-        protected virtual ISet<string> StopWords { get; set; }
+        protected ISet<string> StopWords { get; set; }
 
         public void SetStopWords(string stopWordsFile)
         {
             StopWords = new HashSet<string>();
             var lines = FileExtension.ReadEmbeddedAllLines(stopWordsFile);
             foreach (var line in lines)
-            {
                 StopWords.Add(line.Trim());
-            }
         }
 
         public void AddStopWord(string word)
         {
             if (!StopWords.Contains(word))
-            {
                 StopWords.Add(word.Trim());
-            }
         }
 
         public void AddStopWords(IEnumerable<string> words)
         {
             foreach (var word in words)
-            {
                 AddStopWord(word);
-            }
         }
 
-        public abstract IEnumerable<string> ExtractTags(string text, int count = 20, IEnumerable<string> allowPos = null);
-        public abstract IEnumerable<WordWeightPair> ExtractTagsWithWeight(string text, int count = 20, IEnumerable<string> allowPos = null);
+        public abstract IEnumerable<string> ExtractTags(string text, int count = 20,
+            IEnumerable<string> allowPos = null);
+
+        public abstract IEnumerable<WordWeightPair> ExtractTagsWithWeight(string text, int count = 20,
+            IEnumerable<string> allowPos = null);
     }
 }

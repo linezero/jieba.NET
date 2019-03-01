@@ -33,23 +33,31 @@ namespace JiebaNet.Analyser
             PosSegmenter = new PosSegmenter(Segmenter);
             SetStopWords(ConfigManager.StopWordsFile);
             if (StopWords.IsEmpty())
-            {
                 StopWords.UnionWith(DefaultStopWords);
-            }
         }
 
-        public override IEnumerable<string> ExtractTags(string text, int count = 20, IEnumerable<string> allowPos = null)
+        public override IEnumerable<string> ExtractTags(string text, int count = 20,
+            IEnumerable<string> allowPos = null)
         {
             var rank = ExtractTagRank(text, allowPos);
-            if (count <= 0) { count = 20; }
+            if (count <= 0)
+            {
+                count = 20;
+            }
+
             return rank.OrderByDescending(p => p.Value).Select(p => p.Key).Take(count);
         }
 
-        public override IEnumerable<WordWeightPair> ExtractTagsWithWeight(string text, int count = 20, IEnumerable<string> allowPos = null)
+        public override IEnumerable<WordWeightPair> ExtractTagsWithWeight(string text, int count = 20,
+            IEnumerable<string> allowPos = null)
         {
             var rank = ExtractTagRank(text, allowPos);
-            if (count <= 0) { count = 20; }
-            return rank.OrderByDescending(p => p.Value).Select(p => new WordWeightPair()
+            if (count <= 0)
+            {
+                count = 20;
+            }
+
+            return rank.OrderByDescending(p => p.Value).Select(p => new WordWeightPair
             {
                 Word = p.Key, Weight = p.Value
             }).Take(count);
@@ -71,27 +79,19 @@ namespace JiebaNet.Analyser
             for (var i = 0; i < words.Count(); i++)
             {
                 var wp = words[i];
-                if (PairFilter(allowPos, wp))
+                if (!PairFilter(allowPos, wp)) continue;
+                for (var j = i + 1; j < i + Span; j++)
                 {
-                    for (var j = i + 1; j < i + Span; j++)
-                    {
-                        if (j >= words.Count)
-                        {
-                            break;
-                        }
-                        if (!PairFilter(allowPos, words[j]))
-                        {
-                            continue;
-                        }
+                    if (j >= words.Count)
+                        break;
+                    if (!PairFilter(allowPos, words[j]))
+                        continue;
 
-                        // TODO: better separator.
-                        var key = wp.Word + "$" + words[j].Word;
-                        if (!cm.ContainsKey(key))
-                        {
-                            cm[key] = 0;
-                        }
-                        cm[key] += 1;
-                    }
+                    // TODO: better separator.
+                    var key = wp.Word + "$" + words[j].Word;
+                    if (!cm.ContainsKey(key))
+                        cm[key] = 0;
+                    cm[key] += 1;
                 }
             }
 
