@@ -18,23 +18,24 @@ namespace JiebaNet.Analyser
         private IDictionary<string, double> IdfFreq { get; set; }
         private double MedianIdf { get; set; }
 
-        public TfidfExtractor(JiebaSegmenter segmenter = null)
+        public TfidfExtractor(ISet<string> stopWords, IDictionary<string, double> idfFreq,
+            JiebaSegmenter segmenter = null)
         {
             Segmenter = segmenter.IsNull() ? new JiebaSegmenter() : segmenter;
             PosSegmenter = new PosSegmenter(Segmenter);
-            SetStopWords(ConfigManager.StopWordsFile);
+            SetStopWords(stopWords);
             if (StopWords.IsEmpty())
                 StopWords.UnionWith(DefaultStopWords);
 
-            Loader = new IdfLoader(DefaultIdfFile);
+            Loader = new IdfLoader(idfFreq);
 
             IdfFreq = Loader.IdfFreq;
             MedianIdf = Loader.MedianIdf;
         }
 
-        public void SetIdfPath(string idfPath)
+        public void SetIdfPath(IDictionary<string, double> idfFreq)
         {
-            Loader.SetNewPath(idfPath);
+            Loader.SetNewPath(idfFreq);
             IdfFreq = Loader.IdfFreq;
             MedianIdf = Loader.MedianIdf;
         }

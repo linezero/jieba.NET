@@ -25,13 +25,13 @@ namespace JiebaNet.Analyser
                    && !StopWords.Contains(wp.Word.ToLower());
         }
 
-        public TextRankExtractor()
+        public TextRankExtractor(ISet<string> stopWords)
         {
             Span = 5;
 
             Segmenter = new JiebaSegmenter();
             PosSegmenter = new PosSegmenter(Segmenter);
-            SetStopWords(ConfigManager.StopWordsFile);
+            SetStopWords(stopWords);
             if (StopWords.IsEmpty())
                 StopWords.UnionWith(DefaultStopWords);
         }
@@ -68,9 +68,7 @@ namespace JiebaNet.Analyser
         private IDictionary<string, double> ExtractTagRank(string text, IEnumerable<string> allowPos)
         {
             if (allowPos.IsEmpty())
-            {
                 allowPos = DefaultPosFilter;
-            }
 
             var g = new UndirectWeightedGraph();
             var cm = new Dictionary<string, int>();

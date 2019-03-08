@@ -8,7 +8,5 @@ namespace JiebaNet.Analyser
         public static string ConfigFileBaseDir => "Resources";
 
         public static string IdfFile => Path.Combine(ConfigFileBaseDir, "idf.txt");
-
-        public static string StopWordsFile => Path.Combine(ConfigFileBaseDir, "stopwords.txt");
     }
 }
