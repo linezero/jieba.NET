@@ -36,6 +36,9 @@ namespace jieba.NET
             {
                 Console.WriteLine($"{pair.Key}: {pair.Value}");
             }
+
+            //new TestDemo().CutDemo();
+
             Console.ReadKey();
         }
     }

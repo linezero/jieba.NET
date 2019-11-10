@@ -6,31 +6,14 @@
     <RootNamespace>JiebaNet.Analyser</RootNamespace>
     <PackageProjectUrl>https://github.com/linezero/jieba.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/linezero/jieba.NET</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/linezero/jieba.NET/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>LineZero</Copyright>
     <Authors>LineZero</Authors>
     <PackageId>JiebaNetCore</PackageId>
     <Product>JiebaNetCore</Product>
     <Description>jieba分词 .NET Core 版本</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>    
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\idf.txt" />
-    <None Remove="Resources\stopwords.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\idf.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\stopwords.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Segmenter\Segmenter.csproj" />
