@@ -18,7 +18,9 @@ namespace JiebaNet.Segmenter.PosSeg
 
         #region Regular Expressions
 
-        internal static readonly Regex RegexChineseInternal = new Regex(@"([\u4E00-\u9FD5a-zA-Z0-9+#&\._]+)", RegexOptions.Compiled);
+        internal static readonly Regex RegexChineseInternal =
+            new Regex(@"([\u4E00-\u9FD5a-zA-Z0-9+#&\._]+)", RegexOptions.Compiled);
+
         internal static readonly Regex RegexSkipInternal = new Regex(@"(\r\n|\s)", RegexOptions.Compiled);
 
         internal static readonly Regex RegexChineseDetail = new Regex(@"([\u4E00-\u9FD5]+)", RegexOptions.Compiled);
@@ -49,7 +51,7 @@ namespace JiebaNet.Segmenter.PosSeg
                     var tokens = line.Split(' ');
                     if (tokens.Length < 2)
                     {
-                        Debug.Fail(string.Format("Invalid line: {0}", line));
+                        Debug.Fail($"Invalid line: {line}");
                         continue;
                     }
 
@@ -61,7 +63,7 @@ namespace JiebaNet.Segmenter.PosSeg
             }
             catch (System.IO.IOException e)
             {
-                Debug.Fail(string.Format("Word tag table load failure, reason: {0}", e.Message));
+                Debug.Fail($"Word tag table load failure, reason: {e.Message}");
             }
             catch (FormatException fe)
             {
@@ -69,7 +71,7 @@ namespace JiebaNet.Segmenter.PosSeg
             }
         }
 
-        private JiebaSegmenter _segmenter;
+        private readonly JiebaSegmenter _segmenter;
 
         public PosSegmenter()
         {
@@ -83,11 +85,9 @@ namespace JiebaNet.Segmenter.PosSeg
 
         private void CheckNewUserWordTags()
         {
-            if (_segmenter.UserWordTagTab.IsNotEmpty())
-            {
-                _wordTagTab.Update(_segmenter.UserWordTagTab);
-                _segmenter.UserWordTagTab = new Dictionary<string, string>();
-            }
+            if (!_segmenter.UserWordTagTab.IsNotEmpty()) return;
+            _wordTagTab.Update(_segmenter.UserWordTagTab);
+            _segmenter.UserWordTagTab = new Dictionary<string, string>();
         }
 
         public IEnumerable<Pair> Cut(string text, bool hmm = true)
@@ -104,13 +104,9 @@ namespace JiebaNet.Segmenter.PosSeg
             var blocks = RegexChineseInternal.Split(text);
             Func<string, IEnumerable<Pair>> cutMethod = null;
             if (hmm)
-            {
                 cutMethod = CutDag;
-            }
             else
-            {
                 cutMethod = CutDagWithoutHmm;
-            }
 
             var tokens = new List<Pair>();
             foreach (var blk in blocks)
@@ -135,17 +131,11 @@ namespace JiebaNet.Segmenter.PosSeg
                                 // TODO: each char?
                                 var xxs = xx.ToString();
                                 if (RegexNumbers.IsMatch(xxs))
-                                {
                                     tokens.Add(new Pair(xxs, "m"));
-                                }
                                 else if (RegexEnglishWords.IsMatch(x))
-                                {
                                     tokens.Add(new Pair(xxs, "eng"));
-                                }
                                 else
-                                {
                                     tokens.Add(new Pair(xxs, "x"));
-                                }
                             }
                         }
                     }
@@ -170,9 +160,7 @@ namespace JiebaNet.Segmenter.PosSeg
                 var y = route[x].Key + 1;
                 var w = sentence.Substring(x, y - x);
                 if (y - x == 1)
-                {
                     buf += w;
-                }
                 else
                 {
                     if (buf.Length > 0)
@@ -180,15 +168,15 @@ namespace JiebaNet.Segmenter.PosSeg
                         AddBufferToWordList(tokens, buf);
                         buf = string.Empty;
                     }
+
                     tokens.Add(new Pair(w, _wordTagTab.GetDefault(w, "x")));
                 }
+
                 x = y;
             }
 
             if (buf.Length > 0)
-            {
                 AddBufferToWordList(tokens, buf);
-            }
 
             return tokens;
         }
@@ -204,10 +192,9 @@ namespace JiebaNet.Segmenter.PosSeg
             var buf = string.Empty;
             var n = sentence.Length;
 
-            var y = -1;
             while (x < n)
             {
-                y = route[x].Key + 1;
+                var y = route[x].Key + 1;
                 var w = sentence.Substring(x, y - x);
                 // TODO: char or word?
                 if (RegexEnglishChar.IsMatch(w))
@@ -222,15 +209,14 @@ namespace JiebaNet.Segmenter.PosSeg
                         tokens.Add(new Pair(buf, "eng"));
                         buf = string.Empty;
                     }
+
                     tokens.Add(new Pair(w, _wordTagTab.GetDefault(w, "x")));
                     x = y;
                 }
             }
 
             if (buf.Length > 0)
-            {
                 tokens.Add(new Pair(buf, "eng"));
-            }
 
             return tokens;
         }
@@ -250,21 +236,13 @@ namespace JiebaNet.Segmenter.PosSeg
                     var tmp = RegexSkipDetail.Split(blk);
                     foreach (var x in tmp)
                     {
-                        if (!string.IsNullOrWhiteSpace(x))
-                        {
-                            if (RegexNumbers.IsMatch(x))
-                            {
-                                tokens.Add(new Pair(x, "m"));
-                            }
-                            else if(RegexEnglishWords.IsMatch(x))
-                            {
-                                tokens.Add(new Pair(x, "eng"));
-                            }
-                            else
-                            {
-                                tokens.Add(new Pair(x, "x"));
-                            }
-                        }
+                        if (string.IsNullOrWhiteSpace(x)) continue;
+                        if (RegexNumbers.IsMatch(x))
+                            tokens.Add(new Pair(x, "m"));
+                        else if (RegexEnglishWords.IsMatch(x))
+                            tokens.Add(new Pair(x, "eng"));
+                        else
+                            tokens.Add(new Pair(x, "x"));
                     }
                 }
             }

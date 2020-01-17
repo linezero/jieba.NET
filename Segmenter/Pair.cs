@@ -2,7 +2,7 @@
 {
     public class Pair<TKey>
     {
-        public TKey Key { get;set; }
+        public TKey Key { get; set; }
         public double Freq { get; set; }
 
         public Pair(TKey key, double freq)

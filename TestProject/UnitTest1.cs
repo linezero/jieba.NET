@@ -1,16 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using JiebaNet.Analyser;
-using JiebaNet.Segmenter.PosSeg;
 using JiebaNet.Segmenter;
 using JiebaNet.Segmenter.Common;
+using JiebaNet.Segmenter.PosSeg;
+using Xunit;
+using Xunit.Abstractions;
 
-namespace jieba.NET
+namespace TestProject
 {
-    public class TestDemo
+    public class UnitTest1
     {
+        private readonly ITestOutputHelper _testOutputHelper;
 
+        public UnitTest1(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
+        [Fact]
+        public void Test1()
+        {
+            var segmenter = new JiebaSegmenter();
+            segmenter.LoadUserDict("userdict.txt");
+            var segments = segmenter.Cut("我来到北京清华大学", cutAll: true);
+            Assert.Equal("【全模式】：我/ 来到/ 北京/ 清华/ 清华大学/ 华大/ 大学", $"【全模式】：{string.Join("/ ", segments)}");
+            segments = segmenter.Cut("我来到北京清华大学"); // 默认为精确模式
+            Assert.Equal("【精确模式】：我/ 来到/ 北京/ 清华大学", $"【精确模式】：{string.Join("/ ", segments)}");
+
+            segments = segmenter.Cut("他来到了网易杭研大厦"); // 默认为精确模式，同时也使用HMM模型
+            Assert.Equal("【新词识别】：他/ 来到/ 了/ 网易/ 杭研/ 大厦", $"【新词识别】：{string.Join("/ ", segments)}");
+
+            segments = segmenter.CutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造"); // 搜索引擎模式
+            Assert.Equal("【搜索引擎模式】：小明/ 硕士/ 毕业/ 于/ 中国/ 科学/ 学院/ 科学院/ 中国科学院/ 计算/ 计算所/ ，/ 后/ 在/ 日本/ 京都/ 大学/ 日本京都大学/ 深造",
+                $"【搜索引擎模式】：{string.Join("/ ", segments)}");
+
+            segments = segmenter.Cut("结过婚的和尚未结过婚的");
+            Assert.Equal("【歧义消除】：结过婚/ 的/ 和/ 尚未/ 结过婚/ 的", $"【歧义消除】：{string.Join("/ ", segments)}");
+
+            segments = segmenter.Cut("linezerodemo机器学习学习机器");
+            Assert.Equal("【用户字典】：linezero/ demo/ 机器学习/ 学习/ 机器", $"【用户字典】：{string.Join("/ ", segments)}");
+        }
+
+        [Fact]
+        public void Test2()
+        {
+            var segmenter = new JiebaSegmenter();
+            //词频统计
+            var s = "此领域探讨如何处理及运用自然语言。自然语言生成系统把计算机数据转化为自然语言。自然语言理解系统把自然语言转化为计算机程序更易于处理的形式。";
+            var freqs = new Counter<string>(segmenter.Cut(s));
+            foreach (var (key, value) in freqs.MostCommon(5))
+            {
+                _testOutputHelper.WriteLine($"{key}: {value}");
+            }
+        }
+
+        [Fact]
         public void CutDemo()
         {
             var segmenter = new JiebaSegmenter();
@@ -43,15 +88,9 @@ namespace jieba.NET
             //segmenter.AddWord("长沙市");
             segments = segmenter.Cut("湖南长沙市天心区");
             Console.WriteLine("【精确模式】：{0}", string.Join("/ ", segments));
-            TokenizeDemo();
-            TokenizeSearchDemo();
-            PosCutDemo();
-            ExtractTagsDemo();
-            ExtractTagsDemo2();
-            TestWordFreq();
         }
 
-
+        [Fact]
         public void TokenizeDemo()
         {
             var segmenter = new JiebaSegmenter();
@@ -64,7 +103,7 @@ namespace jieba.NET
             }
         }
 
-
+        [Fact]
         public void TokenizeSearchDemo()
         {
             var segmenter = new JiebaSegmenter();
@@ -77,7 +116,7 @@ namespace jieba.NET
             }
         }
 
-
+        [Fact]
         public void PosCutDemo()
         {
             var posSeg = new PosSegmenter();
@@ -88,12 +127,12 @@ namespace jieba.NET
                 string.Join(" ", tokens.Select(token => string.Format("{0}/{1}", token.Word, token.Flag))));
         }
 
-
+        [Fact]
         public void ExtractTagsDemo()
         {
             var text =
                 "程序员(英文Programmer)是从事程序开发、维护的专业人员。一般将程序员分为程序设计人员和程序编码人员，但两者的界限并不非常清楚，特别是在中国。软件从业人员分为初级程序员、高级程序员、系统分析员和项目经理四大类。";
-            var extractor = new TfidfExtractor(new HashSet<string>(), new Dictionary<string, double>());
+            var extractor = new TfidfExtractor();
             var keywords = extractor.ExtractTags(text);
             foreach (var keyword in keywords)
             {
@@ -101,7 +140,7 @@ namespace jieba.NET
             }
         }
 
-
+        [Fact]
         public void ExtractTagsDemo2()
         {
             var text =
@@ -109,7 +148,7 @@ namespace jieba.NET
                          算法中的指令描述的是一个计算，当其运行时能从一个初始状态和初始输入（可能为空）开始，经过一系列有限而清晰定义的状态最终产生输出并停止于一个终态。一个状态到另一个状态的转移不一定是确定的。随机化算法在内的一些算法，包含了一些随机输入。
                          形式化算法的概念部分源自尝试解决希尔伯特提出的判定问题，并在其后尝试定义有效计算性或者有效方法中成形。这些尝试包括库尔特·哥德尔、雅克·埃尔布朗和斯蒂芬·科尔·克莱尼分别于1930年、1934年和1935年提出的递归函数，阿隆佐·邱奇于1936年提出的λ演算，1936年Emil Leon Post的Formulation 1和艾伦·图灵1937年提出的图灵机。即使在当前，依然常有直觉想法难以定义为形式化算法的情况。";
 
-            var extractor = new TfidfExtractor(new HashSet<string>(), new Dictionary<string, double>());
+            var extractor = new TfidfExtractor();
             var keywords = extractor.ExtractTags(text, 10, Constants.NounAndVerbPos);
             foreach (var keyword in keywords)
             {
@@ -117,14 +156,15 @@ namespace jieba.NET
             }
         }
 
+        [Fact]
         public void TestWordFreq()
         {
             var s = "此领域探讨如何处理及运用自然语言。自然语言生成系统把计算机数据转化为自然语言。自然语言理解系统把自然语言转化为计算机程序更易于处理的形式。";
             var seg = new JiebaSegmenter();
             var freqs = new Counter<string>(seg.Cut(s));
-            foreach (var (key, value) in freqs.MostCommon())
+            foreach (var pair in freqs.MostCommon())
             {
-                Console.WriteLine($"{key}: {value}");
+                Console.WriteLine($"{pair.Key}: {pair.Value}");
             }
         }
     }

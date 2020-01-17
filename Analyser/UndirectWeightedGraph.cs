@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,9 +12,10 @@ namespace JiebaNet.Analyser
 
     public class UndirectWeightedGraph
     {
-        private static readonly double d = 0.85;
+        private const double D = 0.85;
 
-        public IDictionary<string, List<Edge>> Graph { get; set; } 
+        public IDictionary<string, List<Edge>> Graph { get; set; }
+
         public UndirectWeightedGraph()
         {
             Graph = new Dictionary<string, List<Edge>>();
@@ -24,17 +24,13 @@ namespace JiebaNet.Analyser
         public void AddEdge(string start, string end, double weight)
         {
             if (!Graph.ContainsKey(start))
-            {
                 Graph[start] = new List<Edge>();
-            }
 
             if (!Graph.ContainsKey(end))
-            {
                 Graph[end] = new List<Edge>();
-            }
 
-            Graph[start].Add(new Edge(){ Start = start, End = end, Weight = weight });
-            Graph[end].Add(new Edge(){ Start = end, End = start, Weight = weight });
+            Graph[start].Add(new Edge() {Start = start, End = end, Weight = weight});
+            Graph[end].Add(new Edge() {Start = end, End = start, Weight = weight});
         }
 
         public IDictionary<string, double> Rank()
@@ -44,7 +40,7 @@ namespace JiebaNet.Analyser
 
             // init scores
             var count = Graph.Count > 0 ? Graph.Count : 1;
-            var wsdef = 1.0/count;
+            var wsdef = 1.0 / count;
 
             foreach (var pair in Graph)
             {
@@ -60,10 +56,8 @@ namespace JiebaNet.Analyser
                 {
                     var s = 0d;
                     foreach (var edge in Graph[n])
-                    {
-                        s += edge.Weight/outSum[edge.End]*ws[edge.End];
-                    }
-                    ws[n] = (1 - d) + d*s;
+                        s += edge.Weight / outSum[edge.End] * ws[edge.End];
+                    ws[n] = (1 - D) + D * s;
                 }
             }
 
@@ -73,19 +67,13 @@ namespace JiebaNet.Analyser
             foreach (var w in ws.Values)
             {
                 if (w < minRank)
-                {
                     minRank = w;
-                }
-                if(w > maxRank)
-                {
+                if (w > maxRank)
                     maxRank = w;
-                }
             }
 
             foreach (var pair in ws.ToList())
-            {
-                ws[pair.Key] = (pair.Value - minRank/10.0)/(maxRank - minRank/10.0);
-            }
+                ws[pair.Key] = (pair.Value - minRank / 10.0) / (maxRank - minRank / 10.0);
 
             return ws;
         }

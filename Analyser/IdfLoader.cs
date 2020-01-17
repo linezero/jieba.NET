@@ -1,47 +1,25 @@
 using JiebaNet.Segmenter.Common;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace JiebaNet.Analyser
 {
     public class IdfLoader
     {
-        internal string IdfFilePath { get; set; }
         internal IDictionary<string, double> IdfFreq { get; set; }
         internal double MedianIdf { get; set; }
 
-        public IdfLoader(string idfPath = null)
+        public IdfLoader(IDictionary<string, double> idfFreq)
         {
-            IdfFilePath = string.Empty;
-            IdfFreq = new Dictionary<string, double>();
-            MedianIdf = 0.0;
-            if (!string.IsNullOrWhiteSpace(idfPath))
-            {
-                SetNewPath(idfPath);
-            }
+            IdfFreq = idfFreq ?? new Dictionary<string, double>();
+            MedianIdf = IdfFreq.Values.OrderBy(v => v).ToList()[IdfFreq.Count / 2];
         }
 
-        public void SetNewPath(string newIdfPath)
+        public void SetNewPath(IDictionary<string, double> newIdfFreq)
         {
-            var idfPath = newIdfPath;
-            if (IdfFilePath != idfPath)
-            {
-                IdfFilePath = idfPath;
-                var lines = FileExtension.ReadEmbeddedAllLines(idfPath, Encoding.UTF8);
-                IdfFreq = new Dictionary<string, double>();
-                foreach (var line in lines)
-                {
-                    var parts = line.Trim().Split(' ');
-                    var word = parts[0];
-                    var freq = double.Parse(parts[1]);
-                    IdfFreq[word] = freq;
-                }
-
-                MedianIdf = IdfFreq.Values.OrderBy(v => v).ToList()[IdfFreq.Count / 2];
-            }
+            IdfFreq = IdfFreq?.Union(newIdfFreq).ToDictionary(k => k.Key, v => v.Value) ?? newIdfFreq;
+            MedianIdf = IdfFreq.Values.OrderBy(v => v).ToList()[IdfFreq.Count / 2];
         }
     }
 }
