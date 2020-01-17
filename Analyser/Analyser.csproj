@@ -6,12 +6,13 @@
     <RootNamespace>JiebaNet.Analyser</RootNamespace>
     <PackageProjectUrl>https://github.com/linezero/jieba.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/linezero/jieba.NET</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/linezero/jieba.NET/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>LineZero</Copyright>
     <Authors>LineZero</Authors>
     <PackageId>JiebaNetCore</PackageId>
     <Product>JiebaNetCore</Product>
     <Description>jieba分词 .NET Core 版本</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>    
   </PropertyGroup>
 
   <ItemGroup>

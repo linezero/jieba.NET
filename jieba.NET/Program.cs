@@ -36,6 +36,9 @@ namespace jieba.NET
             {
                 Console.WriteLine($"{key}: {value}");
             }
+
+            //new TestDemo().CutDemo();
+
             Console.ReadKey();
         }
     }

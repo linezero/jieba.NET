@@ -3,17 +3,25 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>JiebaNet.Segmenter</RootNamespace>
-    <AssemblyName>JiebaNet.Segmenter</AssemblyName>
+    <AssemblyName>JiebaNet.Segmenter</AssemblyName>    
+    <PackageProjectUrl>https://github.com/linezero/jieba.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/linezero/jieba.NET</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>LineZero</Copyright>
+    <Authors>LineZero</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\char_state_tab.json" />
     <None Remove="Resources\dict.txt" />
+    <None Remove="Resources\idf.txt" />
     <None Remove="Resources\pos_prob_emit.json" />
     <None Remove="Resources\pos_prob_start.json" />
     <None Remove="Resources\pos_prob_trans.json" />
     <None Remove="Resources\prob_emit.json" />
     <None Remove="Resources\prob_trans.json" />
+    <None Remove="Resources\stopwords.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +29,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\dict.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\idf.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\pos_prob_emit.json">
@@ -36,6 +47,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\prob_trans.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\stopwords.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

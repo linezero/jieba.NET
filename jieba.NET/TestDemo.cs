@@ -43,6 +43,12 @@ namespace jieba.NET
             //segmenter.AddWord("长沙市");
             segments = segmenter.Cut("湖南长沙市天心区");
             Console.WriteLine("【精确模式】：{0}", string.Join("/ ", segments));
+            TokenizeDemo();
+            TokenizeSearchDemo();
+            PosCutDemo();
+            ExtractTagsDemo();
+            ExtractTagsDemo2();
+            TestWordFreq();
         }
 
 
